@@ -2,12 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-enum ACCOUNT_TYPE {
-    ERROR_TYPE = 0,
-    MAKLER = 1,
-    ADMIN = 2
-};
+#include "sqlfunctions.h"
 
 sqlite3 *db = NULL;
 char *buf;
