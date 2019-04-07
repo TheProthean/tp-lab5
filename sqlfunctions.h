@@ -29,3 +29,5 @@ void addNewMakler(char* login, char* password, char* last_name, char* address, c
 void deleteMakler(char* last_name);
 
 void updateProducts(char* date);
+
+int getMaklerName(char *login);

@@ -429,3 +429,34 @@ void updateProductsLastName(char* last_name) {
     }
     free(sql);     
 }
+
+char* getMaklerName(char *login) {
+    clearTmp();
+    char* sql = (char*)malloc(256)
+    sprintf(sql, "SELECT b.last_name FROM _BROKER b
+                  JOIN _ACCOUNT a ON b._ACCOUNT_id = a.id
+                  WHERE a.login = ?;");
+                  sqlite3_stmt *res;
+    int rc = sqlite3_prepare_v2(db, sql, -1, &res, NULL);
+    if (rc == SQLITE_OK) {
+        sqlite3_bind_text(res,  1, login, -1, SQLITE_TRANSIENT);
+    } 
+    else {
+        fprintf(stderr, "Failed to execute query: %s\n", sqlite3_errmsg(db));
+        return;
+    }
+    if (sqlite3_step(res) == SQLITE_ROW) {
+        int columnCnt = sqlite3_column_count(res);
+        for (int i = 0; i < columnCnt; i += 1) {
+            switch(i) {
+                case 0:
+                    return sqlite3_column_text(res, 0);     // d.id
+                    break;
+            }
+        }
+    }
+    if (err != NULL) {
+        fprintf(stderr, "%s\n", err);
+    }
+    free(sql);
+}
