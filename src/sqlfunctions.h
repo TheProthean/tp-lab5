@@ -6,7 +6,7 @@ enum ACCOUNT_TYPE {
 
 void initSqlDB();
 
-ACCOUNT_TYPE verifyLogin(char* login, char* password);
+enum ACCOUNT_TYPE verifyLogin(char* login, char* password);
 
 void getMaklerDeals(char* last_name); //
 
@@ -30,4 +30,4 @@ void deleteMakler(char* last_name);
 
 void updateProducts(char* date);
 
-int getMaklerName(char *login);
+char* getMaklerName(char *login);

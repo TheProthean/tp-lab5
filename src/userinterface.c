@@ -3,12 +3,20 @@
 #include <string.h>
 #include "sqlfunctions.h"
 
+void login_menu();
+void makler_menu(char* makler_name);
+void ui_getDealInfoByDate();
+void ui_addNewDeal(char* makler_name);
+void admin_menu();
+void ui_addNewMakler();
+void ui_getProductStats();
+
 void main() {
-    login_menu()
+    login_menu();
 }
 
 void login_menu() {
-    ACCOUNT_TYPE account = ERROR_TYPE;
+    enum ACCOUNT_TYPE account = ERROR_TYPE;
     while (account == ERROR_TYPE) {
         char* login = (char*)malloc(64);
         char* password = (char*)malloc(64);
@@ -33,7 +41,7 @@ void login_menu() {
 }
 
 void makler_menu(char* makler_name) {
-    printf("Possible options:\n\t1 - Add new deal\n\t2 - Show all your deals
+    printf("Possible options:\n\t1 - Add new deal\n\t2 - Show all your deals \
             \n\t3 - Show all deals on date\n\t4 - Show the most needed product type\n\t5 - Log out");
     int answer = -1;
     scanf("%d", &answer);
@@ -64,7 +72,7 @@ void ui_getDealInfoByDate() {
     free(date);
 }
 
-void ui_addNewDeal(makler_name) {
+void ui_addNewDeal(char* makler_name) {
     printf("Enter product name: ");
     char *product = (char*)malloc(16);
     scanf("%s", product);
@@ -88,9 +96,9 @@ void ui_addNewDeal(makler_name) {
 }
 
 void admin_menu() {
-    printf("Possible options:\n\t1 - Add new makler\n\t2 - Show all deals of makler
-            \n\t3 - Show all deals on date\n\t4 - Show the most needed product type\n\t
-            \n\t5 - Show most successful makler\n\t6 - Show product stats by period\n\t
+    printf("Possible options:\n\t1 - Add new makler\n\t2 - Show all deals of makler \
+            \n\t3 - Show all deals on date\n\t4 - Show the most needed product type\n\t \
+            \n\t5 - Show most successful makler\n\t6 - Show product stats by period\n\t \
             7 - Show info on buyer\n\t8 - update product info by deals until date\n\t9 - delete makler\n\t10 - Log out");
     int answer = -1;
     scanf("%d", &answer);
