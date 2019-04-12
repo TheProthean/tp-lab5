@@ -1,6 +1,4 @@
-language: c
-rvm:
- - C99
+language: c99
 
 before_install:
   - wget http://downloads.sourceforge.net/project/cunit/CUnit/2.1-2/CUnit-2.1-2-src.tar.bz2
