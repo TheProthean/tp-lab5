@@ -29,17 +29,16 @@ enum ACCOUNT_TYPE verifyLogin(char* login, char* password) {
     clearTmp();
     char *sql = (char*)malloc(128);
     printf("%s %s\n", login, password);
-    sprintf(sql, "SELECT is_admin FROM _ACCOUNT login = \"%s\" AND password = \"%s\";", login, password);
+    sprintf(sql, "SELECT is_admin FROM _ACCOUNT WHERE login = \"%s\" AND password = \"%s\";", login, password);
     sqlite3_exec(db, sql, getAdminStatus, NULL, &err);
     if (err != NULL) {
-        fprintf(stderr, "%s\n", err);
+        printf("%s\n", err);
     }
     free(sql);
     return account;
 }
 
 int getAdminStatus(void *arg, int argc, char **argv, char **azColName) {
-    printf("kfkfkfk%s\n", argv[0]);
     if (!strcmp(argv[0], "false")) {
        account = MAKLER;
     }
@@ -53,9 +52,9 @@ int getAdminStatus(void *arg, int argc, char **argv, char **azColName) {
 
 void getMaklerDeals(char* last_name) {
     clearTmp();
-    char *sql = (char*)malloc(128);
+    char *sql = (char*)malloc(256);
     sprintf(sql, "SELECT d.deal_id, d.transaction_date, p.name, d.count, d.wholesaler_buyer FROM _BROKER b \
-	         JOIN _DEALS d ON d._BROKER_id = b.id \
+	             JOIN _DEALS d ON d._BROKER_id = b.id \
                  JOIN _PRODUCT p ON d._PRODUCT_id = p.id \
                  WHERE b.last_name = ?;");
     sqlite3_stmt *res;
@@ -76,10 +75,10 @@ void getMaklerDeals(char* last_name) {
                     printf("%4d", sqlite3_column_int(res, 0));
                     break;
                 case 1:
-                    printf("%10s", sqlite3_column_text(res, 1));
+                    printf("%12s", sqlite3_column_text(res, 1));
                     break;
                 case 2:
-                    printf("%10s", sqlite3_column_text(res, 2));
+                    printf("%12s", sqlite3_column_text(res, 2));
                     break;
                 case 3:
                     printf("%4d", sqlite3_column_int(res, 3));
@@ -91,7 +90,7 @@ void getMaklerDeals(char* last_name) {
         }
     }
     if (err != NULL) {
-        fprintf(stderr, "%s\n", err);
+        printf("%s\n", err);
     }
     free(sql);
     printf("\n");
@@ -120,7 +119,7 @@ void getProductStats(char* product_name, char* date_from, char* date_until) {
         for (int i = 0; i < columnCnt; i += 1) {
             switch(i) {
                 case 0:
-                    printf("%10s", sqlite3_column_text(res, 0));
+                    printf("%12s", sqlite3_column_text(res, 0));
                     break;
                 case 1:
                     printf("%4d", sqlite3_column_int(res, 1));
@@ -132,7 +131,7 @@ void getProductStats(char* product_name, char* date_from, char* date_until) {
         }
     }
     if (err != NULL) {
-        fprintf(stderr, "%s\n", err);
+        printf("%s\n", err);
     }
     free(sql);
     printf("\n");
@@ -164,10 +163,10 @@ void getListOfBuyerFirms(char* p_name) {
         for (int i = 0; i < columnCnt; i += 1) {
             switch(i) {
                 case 0:
-                    printf("%10s", sqlite3_column_text(res, 0));     // p.name
+                    printf("%12s", sqlite3_column_text(res, 0));     // p.name
                     break;
                 case 1:
-                    printf("%10s", sqlite3_column_text(res, 1));    // d.wholesaler_buyer
+                    printf("%12s", sqlite3_column_text(res, 1));    // d.wholesaler_buyer
                     break;
                 case 2:
                     printf("%4d", sqlite3_column_int(res, 2));    // SUM(d.count)
@@ -179,7 +178,7 @@ void getListOfBuyerFirms(char* p_name) {
         }
     }
     if (err != NULL) {
-        fprintf(stderr, "%s\n", err);
+        printf("%s\n", err);
     }
     free(sql);
     printf("\n");
@@ -197,7 +196,7 @@ void getInfoByProductType() {
                  GROUP BY p.type, d.wholesaler_buyer;");
     sqlite3_exec(db, sql, printInfoByProductType, NULL, &err);
     if (err != NULL) {
-        fprintf(stderr, "%s\n", err);
+        printf("%s\n", err);
     }
     free(sql);
     printf("\n");
@@ -208,10 +207,10 @@ int printInfoByProductType(void *arg, int argc, char **argv, char **azColName) {
     for (int i = 0; i < argc; i += 1) {
         switch(i) {
             case 0:
-                printf("%10s", argv[i]);    // p.type
+                printf("%12s", argv[i]);    // p.type
                 break;
             case 1:
-                printf("%10s", argv[i]);    // d.wholesaler_buyer
+                printf("%12s", argv[i]);    // d.wholesaler_buyer
                 break;
             case 2:
                 printf("%4s", argv[i]);     // SUM(d.count)
@@ -248,10 +247,10 @@ void getBuyersFirmInfo(char* p_wholesaler_supplier) {
         for (int i = 0; i < columnCnt; i += 1) {
             switch(i) {
                 case 0:
-                    printf("%10s", sqlite3_column_text(res, 0));     // wholesaler_supplier
+                    printf("%12s", sqlite3_column_text(res, 0));     // wholesaler_supplier
                     break;
                 case 1:
-                    printf("%10s", sqlite3_column_text(res, 1));    // b.last_name
+                    printf("%12s", sqlite3_column_text(res, 1));    // b.last_name
                     break;
                 case 2:
                     printf("%4d", sqlite3_column_int(res, 2));    // SUM(d.count)
@@ -263,7 +262,7 @@ void getBuyersFirmInfo(char* p_wholesaler_supplier) {
         }
     }
     if (err != NULL) {
-        fprintf(stderr, "%s\n", err);
+        printf("%s\n", err);
     }
     free(sql);
     printf("\n");
@@ -293,19 +292,19 @@ void getDealInfoByDate(char* d_date) {
                     printf("%4d", sqlite3_column_int(res, 0));     // d.id
                     break;
                 case 1:
-                    printf("%10s", sqlite3_column_text(res, 1));    // d.transaction_date
+                    printf("%12s", sqlite3_column_text(res, 1));    // d.transaction_date
                     break;
                 case 2:
                     printf("%4d", sqlite3_column_int(res, 2));    // d.count
                     break;
                 case 3:
-                    printf("%10s", sqlite3_column_text(res, 3));     // d.wholesaler_byuer
+                    printf("%12s", sqlite3_column_text(res, 3));     // d.wholesaler_byuer
                     break;
             }
         }
     }
     if (err != NULL) {
-        fprintf(stderr, "%s\n", err);
+        printf("%s\n", err);
     }
     free(sql);
     printf("\n");
@@ -323,7 +322,7 @@ void getMostSuccessfulMakler() {
                  ORDER BY COUNT(d.deal_id) DESC LIMIT 1);");
     sqlite3_exec(db, sql, printMostSuccessfulMakler, NULL, &err);
     if (err != NULL) {
-        fprintf(stderr, "%s\n", err);
+        printf("%s\n", err);
     }
     free(sql);
     printf("\n");
@@ -334,16 +333,16 @@ int printMostSuccessfulMakler(void *arg, int argc, char **argv, char **azColName
     for (int i = 0; i < argc; i += 1) {
         switch(i) {
             case 0:
-                printf("%10s", argv[i]);    // b.last_name
+                printf("%12s", argv[i]);    // b.last_name
                 break;
             case 1:
-                printf("%10s", argv[i]);    // b.address
+                printf("%12s", argv[i]);    // b.address
                 break;
             case 2:
-                printf("%10s", argv[i]);     // b.DOB
+                printf("%12s", argv[i]);     // b.DOB
                 break;
             case 3:
-                printf("%10s", argv[i]);     //p.wholesaler_supplier
+                printf("%12s", argv[i]);     //p.wholesaler_supplier
                 break;
         }
     }
@@ -367,7 +366,7 @@ void addNewDeal(char* last_name, char* p_name, char* transaction_date, int count
                  COMMIT;", last_name, p_name, transaction_date, count, wholesaler_buyer, last_name, count, last_name, count, p_name);
     sqlite3_exec(db, sql, NULL, NULL, &err);
     if (err != NULL) {
-        fprintf(stderr, "%s\n", err);
+        printf("%s\n", err);
     }
     free(sql);
 }
@@ -386,7 +385,7 @@ void addNewMakler(char* login, char* password, char* last_name, char* address, c
                  login, password, last_name, address, DOB, login, last_name);
     sqlite3_exec(db, sql, NULL, NULL, &err);
     if (err != NULL) {
-        fprintf(stderr, "%s\n", err);
+        printf("%s\n", err);
     }
     free(sql);
 }
@@ -403,7 +402,7 @@ void deleteMakler(char* last_name) {
                  COMMIT;", last_name, last_name, last_name);
     sqlite3_exec(db, sql, NULL, NULL, &err);
     if (err != NULL) {
-        fprintf(stderr, "%s\n", err);
+        printf("%s\n", err);
     }
     free(sql); 
 }
@@ -416,7 +415,7 @@ void updateProducts(char* date) {
                  COMMIT;", date);
     sqlite3_exec(db, sql, NULL, NULL, &err);
     if (err != NULL) {
-        fprintf(stderr, "%s\n", err);
+        printf("%s\n", err);
     }
     free(sql);     
 }
@@ -429,7 +428,7 @@ void updateProductsLastName(char* last_name) {
                  COMMIT;", last_name);
     sqlite3_exec(db, sql, NULL, NULL, &err);
     if (err != NULL) {
-        fprintf(stderr, "%s\n", err);
+        printf("%s\n", err);
     }
     free(sql);     
 }
@@ -460,7 +459,7 @@ char* getMaklerName(char *login) {
         }
     }
     if (err != NULL) {
-        fprintf(stderr, "%s\n", err);
+        printf("%s\n", err);
     }
     free(sql);
 }
