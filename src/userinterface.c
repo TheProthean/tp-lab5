@@ -45,7 +45,7 @@ void login_menu() {
 void makler_menu(char* makler_name) {
     while (1) {
     printf("Possible options:\n\t1 - Add new deal\n\t2 - Show all your deals \
-            \n\t3 - Show all deals on date\n\t4 - Show the most needed product type\n\t5 - Log out");
+            \n\t3 - Show all deals on date\n\t4 - Show the most needed product type\n\t5 - Log out\n");
     int answer = -1;
     scanf("%d", &answer);
     switch (answer) {
@@ -102,9 +102,10 @@ void ui_addNewDeal(char* makler_name) {
 void admin_menu() {
     while (1) {
     printf("Possible options:\n\t1 - Add new makler\n\t2 - Show all deals of makler \
-            \n\t3 - Show all deals on date\n\t4 - Show the most needed product type\n\t \
-            5 - Show most successful makler\n\t6 - Show product stats by period\n\t \
-            7 - Show info on buyer\n\t8 - update product info by deals until date\n\t9 - delete makler\n\t10 - Log out\n");
+            \n\t3 - Show all deals on date\n\t4 - Show the most needed product type \
+            \n\t5 - Show most successful makler\n\t6 - Show product stats by period \
+            \n\t7 - Show list of buyer on product name\n\t8 - update product info by deals until date \
+            \n\t9 - delete makler\n\t10 - Get info on supplier\n\t11 - Log out\n");
     int answer = -1;
     scanf("%d", &answer);
     switch (answer) {
@@ -131,7 +132,7 @@ void admin_menu() {
             ui_getProductStats();
             break;
         case 7:
-            printf("Enter buyer: ");
+            printf("Enter product name: ");
             char *buyer = (char*)malloc(16);
             scanf("%s", buyer);
             getListOfBuyerFirms(buyer);
@@ -152,6 +153,13 @@ void admin_menu() {
             free(last_name);
             break;
         case 10:
+            printf("Enter supplier: ");
+            char *sup_name = (char*)malloc(16);
+            scanf("%s", sup_name);
+            getBuyersFirmInfo(sup_name);
+            free(sup_name);
+            break;
+        case 11:
             printf("Logging out...");
             return;
     }
