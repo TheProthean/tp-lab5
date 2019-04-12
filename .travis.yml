@@ -1,4 +1,6 @@
 language: c
+rvm:
+ - C99
 
 before_install:
   - wget http://downloads.sourceforge.net/project/cunit/CUnit/2.1-2/CUnit-2.1-2-src.tar.bz2
@@ -13,4 +15,4 @@ before_install:
   - cd ..
 
 script:
-- make
+- make build
