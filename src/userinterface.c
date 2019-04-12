@@ -12,6 +12,7 @@ void ui_addNewMakler();
 void ui_getProductStats();
 
 void main() {
+    initSqlDB();
     login_menu();
 }
 
@@ -33,6 +34,7 @@ void login_menu() {
                 makler_menu(getMaklerName(login));
                 break;
             case ADMIN:
+                admin_menu();
                 break;
         }
         free(login);
@@ -41,6 +43,7 @@ void login_menu() {
 }
 
 void makler_menu(char* makler_name) {
+    while (1) {
     printf("Possible options:\n\t1 - Add new deal\n\t2 - Show all your deals \
             \n\t3 - Show all deals on date\n\t4 - Show the most needed product type\n\t5 - Log out");
     int answer = -1;
@@ -60,7 +63,8 @@ void makler_menu(char* makler_name) {
             break;
         case 5:
             printf("Logging out...");
-            break;
+            return;
+    }
     }
 }
 
@@ -96,10 +100,11 @@ void ui_addNewDeal(char* makler_name) {
 }
 
 void admin_menu() {
+    while (1) {
     printf("Possible options:\n\t1 - Add new makler\n\t2 - Show all deals of makler \
             \n\t3 - Show all deals on date\n\t4 - Show the most needed product type\n\t \
-            \n\t5 - Show most successful makler\n\t6 - Show product stats by period\n\t \
-            7 - Show info on buyer\n\t8 - update product info by deals until date\n\t9 - delete makler\n\t10 - Log out");
+            5 - Show most successful makler\n\t6 - Show product stats by period\n\t \
+            7 - Show info on buyer\n\t8 - update product info by deals until date\n\t9 - delete makler\n\t10 - Log out\n");
     int answer = -1;
     scanf("%d", &answer);
     switch (answer) {
@@ -148,7 +153,8 @@ void admin_menu() {
             break;
         case 10:
             printf("Logging out...");
-            break;
+            return;
+    }
     }
 }
 
