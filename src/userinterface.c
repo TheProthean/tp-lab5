@@ -14,6 +14,7 @@ void ui_getProductStats();
 void main() {
     initSqlDB();
     login_menu();
+    closeSqlDB();
 }
 
 void login_menu() {

@@ -19,6 +19,11 @@ void initSqlDB() {
     buf = (char*)malloc(256);
 }
 
+void closeSqlDB() {
+    sqlite3_close(db);
+    free(buf);
+}
+
 void clearTmp() {
     err = NULL;
     account = ERROR_TYPE;
@@ -359,19 +364,18 @@ int printMostSuccessfulMakler(void *arg, int argc, char **argv, char **azColName
 
 void addNewDeal(char* last_name, char* p_name, char* transaction_date, int count, char* wholesaler_buyer) {
     clearTmp();
-    char *sql = (char*)malloc(512);
-    sprintf(sql, "BEGIN; \
-                 INSERT INTO _DEALS(_BROKER_id, _PRODUCT_id, transaction_date, count, wholesaler_buyer) \
-	         VALUES ((SELECT b.id FROM _BROKER b WHERE b.last_name = %s), \
-                 (SELECT p.id FROM _PRODUCT p WHERE p.name = %s), %s, %d, %s); \
+    char *sql = (char*)malloc(1024);
+    sprintf(sql, 
+                 "INSERT INTO _DEALS(_BROKER_id, _PRODUCT_id, transaction_date, count, wholesaler_buyer) \
+	             VALUES ((SELECT b.id FROM _BROKER b WHERE b.last_name = \"%s\"), \
+                 (SELECT p.id FROM _PRODUCT p WHERE p.name = \"%s\"), \"%s\", %d, \"%s\"); \
                  UPDATE _STATISTICS SET count = (SELECT s1.count FROM _STATISTICS s1 \
                  WHERE s1._BROKER_id = (SELECT b1.id FROM _BROKER b1 \
-                 WHERE b1.last_name = %s)) + %d, \
+                 WHERE b1.last_name = \"%s\")) + %d, \
                  total_amount = (SELECT s2.total_amount FROM _STATISTICS s2 \
                  WHERE s2._BROKER_id = (SELECT b2.id FROM _BROKER b2 \
-                 WHERE b2.last_name = %s)) + %d * (SELECT p1.cost FROM _PRODUCT p1 \
-                 WHERE p1.name = %s); \
-                 COMMIT;", last_name, p_name, transaction_date, count, wholesaler_buyer, last_name, count, last_name, count, p_name);
+                 WHERE b2.last_name = \"%s\")) + %d * (SELECT p1.cost FROM _PRODUCT p1 \
+                 WHERE p1.name = \"%s\");", last_name, p_name, transaction_date, count, wholesaler_buyer, last_name, count, last_name, count, p_name);
     sqlite3_exec(db, sql, NULL, NULL, &err);
     if (err != NULL) {
         printf("%s\n", err);
@@ -381,15 +385,14 @@ void addNewDeal(char* last_name, char* p_name, char* transaction_date, int count
 
 void addNewMakler(char* login, char* password, char* last_name, char* address, char* DOB) {
     clearTmp();
-    char* sql = (char*)malloc(512);
-    sprintf(sql, "BEGIN; \
-                 INSERT INTO _ACCOUNT(login, password, is_admin) \
+    char* sql = (char*)malloc(1024);
+    sprintf(sql, 
+                 "INSERT INTO _ACCOUNT(login, password, is_admin) \
                  VALUES(%s, %s, false); \
                  INSERT INTO _BROKER(last_name, address, DOB, _ACCOUNT_id) \
                  VALUES(%s, %s, %s, (SELECT a.id FROM _ACCOUNT a WHERE a.login = %s)); \
                  INSERT INTO _STATISTICS(_BROKER_id, count, total_amount) \
-                 VALUES((SELECT b.id FROM _BROKER b WHERE b.last_name = %s), 0, 0); \
-                 COMMIT;",
+                 VALUES((SELECT b.id FROM _BROKER b WHERE b.last_name = %s), 0, 0); ",
                  login, password, last_name, address, DOB, login, last_name);
     sqlite3_exec(db, sql, NULL, NULL, &err);
     if (err != NULL) {
@@ -402,12 +405,11 @@ void deleteMakler(char* last_name) {
     clearTmp();
     char* sql = (char*)malloc(512);
     updateProductsLastName(last_name);
-    sprintf(sql, "BEGIN; \
-                 DELETE FROM _STATISTICS \
+    sprintf(sql, 
+                 "DELETE FROM _STATISTICS \
                  WHERE _BROKER_id = (SELECT id FROM _BROKER WHERE last_name = %s); \
                  DELETE FROM _ACCOUNT WHERE id = (SELECT _ACCOUNT_id FROM _BROKER WHERE last_name = %s); \
-                 DELETE FROM _BROKER WHERE last_name = %s; \
-                 COMMIT;", last_name, last_name, last_name);
+                 DELETE FROM _BROKER WHERE last_name = %s;", last_name, last_name, last_name);
     sqlite3_exec(db, sql, NULL, NULL, &err);
     if (err != NULL) {
         printf("%s\n", err);
@@ -418,9 +420,8 @@ void deleteMakler(char* last_name) {
 void updateProducts(char* date) {
     clearTmp();
     char* sql = (char*)malloc(512);
-    sprintf(sql, "BEGIN; \
-                 DELETE FROM _DEALS WHERE transaction_date < %s; \
-                 COMMIT;", date);
+    sprintf(sql, 
+                 "DELETE FROM _DEALS WHERE transaction_date < %s;", date);
     sqlite3_exec(db, sql, NULL, NULL, &err);
     if (err != NULL) {
         printf("%s\n", err);
@@ -431,9 +432,8 @@ void updateProducts(char* date) {
 void updateProductsLastName(char* last_name) {
     clearTmp();
     char* sql = (char*)malloc(512);
-    sprintf(sql, "BEGIN; \
-                 DELETE FROM _DEALS WHERE _BROKER_id = (SELECT id FROM _BROKER WHERE last_name = %s); \
-                 COMMIT;", last_name);
+    sprintf(sql, 
+                 "DELETE FROM _DEALS WHERE _BROKER_id = (SELECT id FROM _BROKER WHERE last_name = %s);", last_name);
     sqlite3_exec(db, sql, NULL, NULL, &err);
     if (err != NULL) {
         printf("%s\n", err);

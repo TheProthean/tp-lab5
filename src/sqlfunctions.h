@@ -31,3 +31,5 @@ void deleteMakler(char* last_name);
 void updateProducts(char* date);
 
 char* getMaklerName(char *login);
+
+void closeSqlDB();
